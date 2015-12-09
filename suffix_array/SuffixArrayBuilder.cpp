@@ -8,16 +8,6 @@
 
 #include "SuffixArrayBuilder.hpp"
 
-int SuffixArrayBuilder::leq(int c00, int c10, int c01, int c11) {
-    if (c00 == c10 && c01 == c11) {
-        return 0;
-    }
-    if (c00 < c10 || (c00 == c10 && c01 < c11)){
-        return -1;
-    }
-    return 1;
-}
-
 vector<int> SuffixArrayBuilder::radixPass(vector<int> &toSort, vector<int> &keys, int shift) {
     vector<int> counter(alphabetSize, 0);
     vector<int> sorted(toSort.size());
@@ -117,16 +107,17 @@ void SuffixArrayBuilder::buildSuffixArray() {
     }
     while (indexSA12 < n0 + n2 && indexSA0 < n0) {
         if ((SA12[indexSA12] % 3) == 1) {
-            int currentLEQ = leq(str[SA0[indexSA0]], str[SA12[indexSA12]]);
-            if (currentLEQ == -1 ||
-                (currentLEQ == 0 && inversedSA12[SA0[indexSA0] + 1] < inversedSA12[SA12[indexSA12] + 1])) {
+            if (str[SA0[indexSA0]] < str[SA12[indexSA12]] ||
+                (str[SA0[indexSA0]] == str[SA12[indexSA12]] && inversedSA12[SA0[indexSA0] + 1] < inversedSA12[SA12[indexSA12] + 1])) {
                 suffixArray[indexSA++] = SA0[indexSA0++];
             } else {
                 suffixArray[indexSA++] = SA12[indexSA12++];
             }
         } else {
-            int currentLEQ = leq(str[SA0[indexSA0]], str[SA12[indexSA12]], str[SA0[indexSA0] + 1], str[SA12[indexSA12] + 1]);
-            if (currentLEQ == -1 || (currentLEQ == 0 && inversedSA12[SA0[indexSA0] + 2] < inversedSA12[SA12[indexSA12] + 2])) {
+            pair <int, int> SA12Suffix, SA0Suffix;
+            SA0Suffix = make_pair(str[SA0[indexSA0]], str[SA0[indexSA0] + 1]);
+            SA12Suffix = make_pair(str[SA12[indexSA12]], str[SA12[indexSA12] + 1]);
+            if (SA0Suffix < SA12Suffix || (SA0Suffix == SA12Suffix && inversedSA12[SA0[indexSA0] + 2] < inversedSA12[SA12[indexSA12] + 2])) {
                 suffixArray[indexSA++] = SA0[indexSA0++];
             } else {
                 suffixArray[indexSA++] = SA12[indexSA12++];
