@@ -27,8 +27,6 @@ class SuffixArrayBuilder {
     
     vector<int> radixPass(vector<int> &toSort, vector<int> &keys, int shift);
     
-    int leq(int c00, int c10, int c01 = 0, int c11 = 0);
-    
     void buildSuffixArray();
     
     void buildLCP();
