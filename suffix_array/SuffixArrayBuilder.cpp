@@ -41,7 +41,7 @@ void SuffixArrayBuilder::buildSuffixArray() {
     n += 2;
     vector<int> triples;
     for (int i = 0; i < n - 2; ++i) {
-        if (!!(i % 3)) {
+        if ((i % 3) != 0) {
             triples.push_back(i);
         }
     }
@@ -106,25 +106,25 @@ void SuffixArrayBuilder::buildSuffixArray() {
         indexSA12++;
     }
     while (indexSA12 < n0 + n2 && indexSA0 < n0) {
+        bool toAddSA0Suffix;
         if ((SA12[indexSA12] % 3) == 1) {
-            if (str[SA0[indexSA0]] < str[SA12[indexSA12]] ||
-                (str[SA0[indexSA0]] == str[SA12[indexSA12]] && inversedSA12[SA0[indexSA0] + 1] < inversedSA12[SA12[indexSA12] + 1])) {
-                suffixArray[indexSA++] = SA0[indexSA0++];
-            } else {
-                suffixArray[indexSA++] = SA12[indexSA12++];
-            }
-        } else {
             pair <int, int> SA12Suffix, SA0Suffix;
-            SA0Suffix = {str[SA0[indexSA0]], str[SA0[indexSA0] + 1]};
-            SA12Suffix = {str[SA12[indexSA12]], str[SA12[indexSA12] + 1]};
-            if (SA0Suffix < SA12Suffix || (SA0Suffix == SA12Suffix && inversedSA12[SA0[indexSA0] + 2] < inversedSA12[SA12[indexSA12] + 2])) {
-                suffixArray[indexSA++] = SA0[indexSA0++];
-            } else {
-                suffixArray[indexSA++] = SA12[indexSA12++];
-            }
+            SA0Suffix = {str[SA0[indexSA0]], inversedSA12[SA0[indexSA0] + 1]};
+            SA12Suffix = {str[SA12[indexSA12]], inversedSA12[SA12[indexSA12] + 1]};
+            toAddSA0Suffix = SA0Suffix < SA12Suffix;
+        } else {
+            tuple <int, int, int> SA12Suffix, SA0Suffix;
+            SA0Suffix = {str[SA0[indexSA0]], str[SA0[indexSA0] + 1], inversedSA12[SA0[indexSA0] + 2]};
+            SA12Suffix = {str[SA12[indexSA12]], str[SA12[indexSA12] + 1], inversedSA12[SA12[indexSA12] + 2]};
+            toAddSA0Suffix = SA0Suffix < SA12Suffix;
+        }
+        if (toAddSA0Suffix) {
+            suffixArray[indexSA++] = SA0[indexSA0++];
+        } else {
+            suffixArray[indexSA++] = SA12[indexSA12++];
         }
     }
-    
+
     if (indexSA12 == n0 + n2) {
         while (indexSA0 < n0) {
             suffixArray[indexSA++] = SA0[indexSA0++];
