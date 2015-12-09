@@ -6,7 +6,7 @@
 //  Copyright © 2015 mipt. All rights reserved.
 //
 
-#include "SuffixTreeBuilder.hpp"
+#include "SuffixArrayBuilder.hpp"
 
 int SuffixArrayBuilder::leq(int c00, int c10, int c01, int c11) {
     if (c00 == c10 && c01 == c11) {

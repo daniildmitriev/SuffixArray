@@ -7,7 +7,7 @@
 //
 
 #include <iostream>
-#include "SuffixTreeBuilder.hpp"
+#include "SuffixArrayBuilder.hpp"
 
 void timusSolution() {
     int k;
