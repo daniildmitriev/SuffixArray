@@ -115,8 +115,8 @@ void SuffixArrayBuilder::buildSuffixArray() {
             }
         } else {
             pair <int, int> SA12Suffix, SA0Suffix;
-            SA0Suffix = make_pair(str[SA0[indexSA0]], str[SA0[indexSA0] + 1]);
-            SA12Suffix = make_pair(str[SA12[indexSA12]], str[SA12[indexSA12] + 1]);
+            SA0Suffix = {str[SA0[indexSA0]], str[SA0[indexSA0] + 1]};
+            SA12Suffix = {str[SA12[indexSA12]], str[SA12[indexSA12] + 1]};
             if (SA0Suffix < SA12Suffix || (SA0Suffix == SA12Suffix && inversedSA12[SA0[indexSA0] + 2] < inversedSA12[SA12[indexSA12] + 2])) {
                 suffixArray[indexSA++] = SA0[indexSA0++];
             } else {
