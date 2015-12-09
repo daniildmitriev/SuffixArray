@@ -43,5 +43,13 @@ void timusSolution() {
 
 int main() {
     timusSolution();
+//    string s;
+//    cin >> s;
+//    SuffixArrayBuilder SABuilder = SuffixArrayBuilder(s, 'a', 30);
+//    vector<int> sa = SABuilder.getSuffixArray();
+//    for (int i = 0; i < sa.size(); ++i) {
+//        cout << sa[i] << " ";
+//    }
+//    cin >> s;
     return 0;
 }
