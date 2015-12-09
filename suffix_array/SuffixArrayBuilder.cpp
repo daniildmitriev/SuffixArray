@@ -63,16 +63,13 @@ void SuffixArrayBuilder::buildSuffixArray() {
     radixSort = radixPass(radixSort, str, 0);
     
     int currentTriplesSize = 0;
-    tuple<int, int, int> lastTriple;
+    tuple<int, int, int> lastTriple, currentTriple;
     lastTriple = {-1, -1, -1};
     
     for (int i = 0; i < n0 + n2; ++i) {
-        if (str[radixSort[i]] != get<0>(lastTriple) ||
-            str[radixSort[i] + 1] != get<1>(lastTriple) ||
-            str[radixSort[i] + 2] != get<2>(lastTriple)) {
-            get<0>(lastTriple) = str[radixSort[i]];
-            get<1>(lastTriple) = str[radixSort[i] + 1];
-            get<2>(lastTriple) = str[radixSort[i] + 2];
+        currentTriple = {str[radixSort[i]], str[radixSort[i] + 1], str[radixSort[i] + 2]};
+        if (currentTriple != lastTriple) {
+            lastTriple = currentTriple;
             currentTriplesSize++;
         }
         if (radixSort[i] % 3 == 1) {
