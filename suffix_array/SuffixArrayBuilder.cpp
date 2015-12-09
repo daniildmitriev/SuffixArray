@@ -56,21 +56,23 @@ void SuffixArrayBuilder::buildSuffixArray() {
         }
     }
     
-    vector<int> radixSort(n0 + n2), sort12(n0 + n2), unmodifiedSA12(n0 + n2), SA12(n0 + n2), SA0(n0), reversedSA12(n);
+    vector<int> radixSort(n0 + n2), sort12(n0 + n2), unmodifiedSA12(n0 + n2), SA12(n0 + n2), SA0(n0), inversedSA12(n);
     
     radixSort = radixPass(triples, str, 2);
     radixSort = radixPass(radixSort, str, 1);
     radixSort = radixPass(radixSort, str, 0);
     
     int currentTriplesSize = 0;
-    int c0, c1, c2;
-    c0 = c1 = c2 = -1;
+    tuple<int, int, int> lastTriple;
+    lastTriple = {-1, -1, -1};
     
     for (int i = 0; i < n0 + n2; ++i) {
-        if (str[radixSort[i]] != c0 || str[radixSort[i] + 1] != c1 || str[radixSort[i] + 2] != c2) {
-            c0 = str[radixSort[i]];
-            c1 = str[radixSort[i] + 1];
-            c2 = str[radixSort[i] + 2];
+        if (str[radixSort[i]] != get<0>(lastTriple) ||
+            str[radixSort[i] + 1] != get<1>(lastTriple) ||
+            str[radixSort[i] + 2] != get<2>(lastTriple)) {
+            get<0>(lastTriple) = str[radixSort[i]];
+            get<1>(lastTriple) = str[radixSort[i] + 1];
+            get<2>(lastTriple) = str[radixSort[i] + 2];
             currentTriplesSize++;
         }
         if (radixSort[i] % 3 == 1) {
@@ -109,7 +111,7 @@ void SuffixArrayBuilder::buildSuffixArray() {
     int indexSA12 = 0, indexSA0 = 0;
     
     for (int i = 0; i < n0 + n2; ++i) {
-        reversedSA12[SA12[i]] = i;
+        inversedSA12[SA12[i]] = i;
     }
     
     int indexSA = 0;
@@ -118,16 +120,16 @@ void SuffixArrayBuilder::buildSuffixArray() {
     }
     while (indexSA12 < n0 + n2 && indexSA0 < n0) {
         if ((SA12[indexSA12] % 3) == 1) {
-            int currentLeq = leq(str[SA0[indexSA0]], str[SA12[indexSA12]]);
-            if (currentLeq == -1 ||
-                (currentLeq == 0 && reversedSA12[SA0[indexSA0] + 1] < reversedSA12[SA12[indexSA12] + 1])) {
+            int currentLEQ = leq(str[SA0[indexSA0]], str[SA12[indexSA12]]);
+            if (currentLEQ == -1 ||
+                (currentLEQ == 0 && inversedSA12[SA0[indexSA0] + 1] < inversedSA12[SA12[indexSA12] + 1])) {
                 suffixArray[indexSA++] = SA0[indexSA0++];
             } else {
                 suffixArray[indexSA++] = SA12[indexSA12++];
             }
         } else {
-            int currentLeq = leq(str[SA0[indexSA0]], str[SA12[indexSA12]], str[SA0[indexSA0] + 1], str[SA12[indexSA12] + 1]);
-            if (currentLeq == -1 || (currentLeq == 0 && reversedSA12[SA0[indexSA0] + 2] < reversedSA12[SA12[indexSA12] + 2])) {
+            int currentLEQ = leq(str[SA0[indexSA0]], str[SA12[indexSA12]], str[SA0[indexSA0] + 1], str[SA12[indexSA12] + 1]);
+            if (currentLEQ == -1 || (currentLEQ == 0 && inversedSA12[SA0[indexSA0] + 2] < inversedSA12[SA12[indexSA12] + 2])) {
                 suffixArray[indexSA++] = SA0[indexSA0++];
             } else {
                 suffixArray[indexSA++] = SA12[indexSA12++];
@@ -154,24 +156,24 @@ void SuffixArrayBuilder::buildSuffixArray() {
 
 void SuffixArrayBuilder::buildLCP() {
     int n = str.size();
-    vector<int> reversedSA(n);
+    vector<int> inversedSA(n);
     for (int i = 0; i < n; ++i) {
-        reversedSA[suffixArray[i]] = i;
+        inversedSA[suffixArray[i]] = i;
     }
     for (int i = 0, k = 0; i < n; ++i) {
         if (k > 0) {
             k--;
         }
-        if (reversedSA[i] == n - 1) {
+        if (inversedSA[i] == n - 1) {
             lcp[n - 1] = -1;
             k = 0;
             continue;
         }
-        int j = suffixArray[reversedSA[i] + 1];
+        int j = suffixArray[inversedSA[i] + 1];
         while (max(i + k, j + k) < str.size() && str[i + k] == str[j + k]) {
             k++;
         }
-        lcp[reversedSA[i]] = k;
+        lcp[inversedSA[i]] = k;
     }
 }
 
